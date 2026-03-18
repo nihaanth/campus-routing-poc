@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ test_id }} - Test Report</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .pass { color: green; font-weight: bold; }
+        .fail { color: red; font-weight: bold; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #333; color: white; }
+    </style>
+</head>
+<body>
+    <h1>{{ test_id }} Report</h1>
+    <p>Passed: {{ passed }} | Failed: {{ failed }}</p>
+    <table>
+        <tr><th>Check</th><th>Expected</th><th>Actual</th><th>Result</th></tr>
+        {% for c in checks %}
+        <tr>
+            <td>{{ c.name }}</td>
+            <td>{{ c.expected }}</td>
+            <td>{{ c.actual }}</td>
+            <td class="{{ c.result|lower }}">{{ c.result }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

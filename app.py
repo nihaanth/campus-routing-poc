@@ -5,6 +5,7 @@ import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
+from flask import Flask, jsonify, render_template
 
 load_dotenv()
 app = Flask(__name__)
@@ -85,7 +86,14 @@ def run_test(test_id):
 
 @app.route('/report/<test_id>', methods=['GET'])
 def get_report(test_id):
-    return jsonify({"test": test_id, "result": "pass"})
+    test_case = load_test_case(test_id)
+    if not test_case:
+        return jsonify({'error': 'Not found'}), 404
+    checks = run_checks(test_case)
+    passed = sum(1 for c in checks if c["result"] == "PASS")
+    failed = len(checks) - passed
+    return render_template('report.html', test_id=test_id, checks=checks, passed=passed, failed=failed)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
