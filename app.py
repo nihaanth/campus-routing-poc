@@ -49,12 +49,12 @@ def run_checks(test_case):
 
 GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')    
 
-def analyze_results(test_id,checks):
-    llm = ChatGoogleGenerativeAI(model='gemini-1.5-flash')
+# def analyze_results(test_id,checks):
+#     llm = ChatGoogleGenerativeAI(model='gemini-1.5-flash')
 
-    summary = '\n'.join([f"c['name'] {c['result']}" for c in checks])
-    prompt = f"Network test results for {test_id}:\n{summary}\nWrite a 2-sentence plain-English health summary."
-    return llm.invoke(prompt).content
+#     summary = '\n'.join([f"c['name'] {c['result']}" for c in checks])
+#     prompt = f"Network test results for {test_id}:\n{summary}\nWrite a 2-sentence plain-English health summary."
+#     return llm.invoke(prompt).content
 
 
 @app.route('/tests',methods=['GET'])
@@ -72,7 +72,7 @@ def run_test(test_id):
 
 
     checks = run_checks(test_case)
-    ai_summary = analyze_results(test_id, checks)
+    # ai_summary = analyze_results(test_id, checks)
     passed = sum(1 for c in checks if c["result"] == "PASS")
 
     return jsonify({
@@ -80,7 +80,7 @@ def run_test(test_id):
         "passed":  passed,
         "failed":  len(checks) - passed,
         "checks":  checks,
-        "ai summary": ai_summary
+        # "ai summary": ai_summary
     })
 
 @app.route('/report/<test_id>', methods=['GET'])

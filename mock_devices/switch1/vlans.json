@@ -1,0 +1,12 @@
+{
+  "100": {
+    "name": "Engineering",
+    "status": "active",
+    "interfaces": ["Ethernet1", "Ethernet2"]
+  },
+  "200": {
+    "name": "Management",
+    "status": "active",
+    "interfaces": ["Ethernet3"]
+  }
+}

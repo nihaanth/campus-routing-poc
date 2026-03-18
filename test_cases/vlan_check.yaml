@@ -1,0 +1,12 @@
+test_id: vlan_check
+test_name: VLAN Configuration Check
+device: switch1
+checks:
+  - name: VLAN 100 exists
+    data_source: vlans
+    path: ["100", "name"]
+    expected: "Engineering"
+  - name: VLAN 200 is Management
+    data_source: vlans
+    path: ["200", "name"]
+    expected: "Management"
