@@ -1,0 +1,13 @@
+{
+    "global":{
+        "router_id":"10.0.0.1",
+        "peers":{
+            "10.0.0.2":{
+            "is_up":true,
+            "is_enabled":true,
+            "remote_as":65002,
+            "uptime":86400
+            }
+        }
+    }
+}

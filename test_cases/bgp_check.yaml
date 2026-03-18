@@ -1,0 +1,15 @@
+---
+
+test_id: bgp_check #used when flask hit /run/bgp_check -  then it will call bgp_check.yaml
+test_name: BGP Neighbor Health Check
+device: switch1
+checks:
+  - name: BGP session is up
+    data_source: bgp_neighbors
+    path: ['global','peers','10.0.0.2','is_up']
+    expected: 'True'
+
+  - name: Remote AS is correct
+    data_source: bgp_neighbors
+    path: ['global','peers','10.0.0.2','remote_as']
+    expected: '65002'
