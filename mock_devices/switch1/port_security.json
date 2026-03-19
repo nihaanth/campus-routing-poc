@@ -1,0 +1,6 @@
+{
+  "Ethernet1": {
+    "dot1x_enabled": true,
+    "auth_vlan": 100
+  }
+}
