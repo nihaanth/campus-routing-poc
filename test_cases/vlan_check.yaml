@@ -10,3 +10,7 @@ checks:
     data_source: vlans
     path: ["200", "name"]
     expected: "Management"
+  - name: VLAN 200 is active
+    data_source: vlans
+    path: ['200','status']
+    expected: 'active'

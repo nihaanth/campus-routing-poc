@@ -2,7 +2,8 @@ from flask import Flask, jsonify, request
 import yaml
 import json
 import os
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
+
 from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template
@@ -48,14 +49,13 @@ def run_checks(test_case):
 
     return results
 
-GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')    
+DEEPSEEK_API_KEY= os.environ.get('DEEPSEEK_API_KEY')    
 
-# def analyze_results(test_id,checks):
-#     llm = ChatGoogleGenerativeAI(model='gemini-1.5-flash')
-
-#     summary = '\n'.join([f"c['name'] {c['result']}" for c in checks])
-#     prompt = f"Network test results for {test_id}:\n{summary}\nWrite a 2-sentence plain-English health summary."
-#     return llm.invoke(prompt).content
+def analyze_results(test_id,checks):
+    llm = ChatOpenAI(model='deepseek-chat', openai_api_key=os.environ.get('DEEPSEEK_API_KEY'), openai_api_base='https://api.deepseek.com')
+    summary = '\n'.join([f"{c['name']}: {c['result']}" for c in checks])
+    prompt = f"Network test results for {test_id}:\n{summary}\nWrite a 2-sentence plain-English health summary."
+    return llm.invoke(prompt).content
 
 
 @app.route('/tests',methods=['GET'])
@@ -73,7 +73,7 @@ def run_test(test_id):
 
 
     checks = run_checks(test_case)
-    # ai_summary = analyze_results(test_id, checks)
+    ai_summary = analyze_results(test_id, checks)
     passed = sum(1 for c in checks if c["result"] == "PASS")
 
     return jsonify({
@@ -81,7 +81,7 @@ def run_test(test_id):
         "passed":  passed,
         "failed":  len(checks) - passed,
         "checks":  checks,
-        # "ai summary": ai_summary
+        "ai summary": ai_summary
     })
 
 @app.route('/report/<test_id>', methods=['GET'])
@@ -93,6 +93,24 @@ def get_report(test_id):
     passed = sum(1 for c in checks if c["result"] == "PASS")
     failed = len(checks) - passed
     return render_template('report.html', test_id=test_id, checks=checks, passed=passed, failed=failed)
+
+@app.route('/run/all',methods = ['POST'])
+def run_all_tests():
+    test_ids = [f.replace('.yaml', '') for f in os.listdir('test_cases')]
+    all_results = {}
+    for test_id in test_ids:
+        test_case = load_test_case(test_id)
+        checks = run_checks(test_case)
+        all_results[test_id] = checks
+    total_passed = sum(len([c for c in checks if c["result"] == "PASS"]) for checks in all_results.values())
+    total_checks = sum(len(checks) for checks in all_results.values())
+    score = round((total_passed / total_checks) * 100)
+
+    # return jsonify({"results": all_results})
+    return jsonify({"score": f"{score}%", "passed": total_passed, "total": total_checks, "results": all_results})
+
+
+
 
 
 if __name__ == '__main__':
