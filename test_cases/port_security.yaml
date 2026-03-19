@@ -2,9 +2,9 @@ test_id: port_security
 test_name: 802.1x auth check
 device: switch1
 checks:
-  - name: authencation server
+  - name: 802.1x is enabled
     data_source: port_security
-    path: ["Ethernet1", "auth_vlan"]
+    path: ["Ethernet1", "dot1x_enabled"]
     expected: "True"
   - name: Auth VLAN is correct
     data_source: port_security
